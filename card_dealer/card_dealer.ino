@@ -8,6 +8,8 @@
 #define direction_Pin_Drawer 6
 #define step_Pin_Drawer 7
 
+#define total_steps 3200
+
 // declearation
 U8X8_SSD1306_128X64_ALT0_HW_I2C u8x8(U8X8_PIN_NONE);
 int i = 0;
@@ -23,6 +25,7 @@ const int buttonPin_0 = 13;
 const int buttonPin_1 = 10;
 const int buttonPin_2 = 11;
 const int buttonPin_3 = 8;
+const int buttonPin_Test = 8;
 
 //for read button0
 int val_0 = 1;
@@ -49,12 +52,20 @@ int val_test = 1;
 int state_test = 0;
 int last_val_test = 1;
 
+int val[5] = {};
+int state[5] = {};
+int last_val[5] = {};
+int button_Pin[5] = {buttonPin_0, buttonPin_1, buttonPin_2, buttonPin_3, buttonPin_Test};
+
 
 int test = 0;
 
 int game_index = 0;
 
 int number_of_player = 2;
+
+int accumulate_step = 0;
+int per_rotate_step = 0;
 
 // whether countinue the game
 int countinue = 0;
@@ -77,6 +88,12 @@ void draw() {
 
 void rotate(int step) {
     stepper_base.step(step);
+    accumulate_step += per_rotate_step;
+}
+
+void back_init_position() {
+    stepper_base.step(total_steps - accumulate_step);
+    accumulate_step = 0;
 }
 
 void clear_write(String str) {
@@ -90,7 +107,27 @@ void next_write(String str) {
     u8x8.print(str);
 }
 
+void simple_block(int pin_Index) {
+    //TODO: need use array manage varible that used to manage button
+    // wait
+    while(1) {
+        val[pin_Index] = digitalRead(button_Pin[pin_Index]);
+        if ((val[pin_Index] == HIGH) && (last_val[pin_Index] == LOW)) {
+            last_val[pin_Index] = val[pin_Index];
+            break;
+        }
+        last_val[pin_Index] = val[pin_Index];
+    }
+
+}
+
 void Texas(int player_number) {
+
+    // init player, position, and angle
+    int per_rotate_angle = 360 / player_number;
+    per_rotate_step = 1 / player_number * 3200;
+
+restart:
     // TODO: need interrupt function
     clear_write("Pre-floding");
     for(int i = 0; i < 2; i++) {
@@ -99,8 +136,10 @@ void Texas(int player_number) {
             draw();
             delay(50);
             //rotate
+            rotate(per_rotate_step);
         }
         // roll_back
+        back_init_position();
     }
 
     next_write("Pre-flod finish");
@@ -116,6 +155,7 @@ void Texas(int player_number) {
         }
         last_val_3 = val_3;
 
+        // check interruption
         val_0 = digitalRead(buttonPin_0);
         if ((val_0 == HIGH) && (last_val_0 == LOW)) {
             last_val_0 = val_0;
@@ -183,6 +223,7 @@ void Texas(int player_number) {
 
     clear_write("Game over");
     next_write("Press to continue");
+    next_write("Press to end");
     while(1) {
         val_3 = digitalRead(buttonPin_3);
         if ((val_3 == HIGH) && (last_val_3 == LOW)) {
@@ -190,6 +231,23 @@ void Texas(int player_number) {
             break;
         }
         last_val_3 = val_3;
+
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
+            clear_write("Put decker back");
+            while(1) {
+                val_2 = digitalRead(buttonPin_2);
+                if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+                    last_val_2 = val_2;
+                    break;
+                }
+                last_val_2 = val_2;
+            }
+            stepper_base.step(per_rotate_step);
+            goto restart;
+        }
+        last_val_2 = val_2;
     }
 
 Texas_Finish: 
