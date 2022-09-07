@@ -107,6 +107,7 @@ void next_write(String str) {
     u8x8.print(str);
 }
 
+// maybe this is wrong since simple block cannot do the interrupt and goto specific place
 void simple_block(int pin_Index) {
     //TODO: need use array manage varible that used to manage button
     // wait
