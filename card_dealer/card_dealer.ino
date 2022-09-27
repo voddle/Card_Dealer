@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <Stepper.h>
 #include <U8x8lib.h>
+#include <SoftwareSerial.h>
 
 #define direction_Pin_Base 4
 #define step_Pin_Base 5
@@ -21,11 +22,16 @@ int lightMode = 0;
 Stepper stepper_drawer(800, 4, 5);
 Stepper stepper_base(800, 6, 7);
 
-const int buttonPin_0 = 13;
-const int buttonPin_1 = 10;
-const int buttonPin_2 = 11;
-const int buttonPin_3 = 8;
+const int buttonPin_0 = 8;
+const int buttonPin_1 = 9;
+const int buttonPin_2 = 10;
+const int buttonPin_3 = 11;
 const int buttonPin_Test = 8;
+
+// const int trigPin = 2;
+// const int echopin = 3;
+// TXD 2, RXD 3
+SoftwareSerial BT(2, 3);
 
 //for read button0
 int val_0 = 1;
@@ -67,6 +73,8 @@ int number_of_player = 2;
 int accumulate_step = 0;
 int per_rotate_step = 0;
 
+int bt_read = -1;
+
 // whether countinue the game
 int countinue = 0;
 
@@ -83,7 +91,7 @@ String game_name[3] = {
 };
 
 void draw() {
-    stepper_drawer.step(2400);
+    stepper_drawer.step(2600);
 }
 
 void rotate(int step) {
@@ -135,7 +143,7 @@ restart:
         for(int j = 0; j < player_number; j++) {
             //draw
             draw();
-            delay(50);
+            delay(300);
             //rotate
             rotate(per_rotate_step);
         }
@@ -361,9 +369,37 @@ void setup() {
 
     u8x8.begin();
     u8x8.setFont(u8x8_font_chroma48medium8_r);
+
+    BT.begin(9600);
 }
 
 void loop() {
+
+    if (BT.available() > 0) {
+        bt_read = BT.read();
+        switch (bt_read)
+        {
+        case 0:
+            /* code */
+            if (game_index == 2) {
+                game_index = 0;
+            } else {
+                game_index += 1;
+            }
+            break;
+        case 1:
+            if (number_of_player == 9) {
+                number_of_player = 2;
+            } else {
+                number_of_player += 1;
+            }
+            break;
+        
+        default:
+            break;
+        }
+        bt_read = -1;
+    }
 
     val_0 = digitalRead(buttonPin_0);
     if ((val_0 == HIGH) && (last_val_0 == LOW)) {

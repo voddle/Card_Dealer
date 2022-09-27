@@ -19,6 +19,7 @@
                 "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\variants\\standard",
                 "D:\\D_program\\Arduino\\libraries\\Stepper\\src",
                 "C:\\Users\\13778\\Documents\\Arduino\\libraries\\U8g2\\src",
+                "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\libraries\\SoftwareSerial\\src",
                 "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\libraries\\SPI\\src",
                 "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\libraries\\Wire\\src",
                 "d:\\d_program\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include",
