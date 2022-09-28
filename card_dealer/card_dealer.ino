@@ -157,6 +157,14 @@ restart:
     next_write("Wait Flop");
   
     while(1) {
+        if (BT.availebal()) {
+            bt_read = BT.read();
+            if (bt_read == 3){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
         val_3 = digitalRead(buttonPin_3);
         if ((val_3 == HIGH) && (last_val_3 == LOW)) {
             last_val_3 = val_3;
@@ -188,6 +196,15 @@ restart:
 
     // wait
     while(1) {
+        if (BT.availebal()) {
+            bt_read = BT.read();
+            if (bt_read == 3){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
         val_3 = digitalRead(buttonPin_3);
         if ((val_3 == HIGH) && (last_val_3 == LOW)) {
             last_val_3 = val_3;
@@ -205,6 +222,15 @@ restart:
 
     // wait
     while(1) {
+        if (BT.availebal()) {
+            bt_read = BT.read();
+            if (bt_read == 3){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
         val_3 = digitalRead(buttonPin_3);
         if ((val_3 == HIGH) && (last_val_3 == LOW)) {
             last_val_3 = val_3;
@@ -222,6 +248,15 @@ restart:
     next_write("SHOW!!!");
 
     while(1) {
+        if (BT.availebal()) {
+            bt_read = BT.read();
+            if (bt_read == 3){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
         val_3 = digitalRead(buttonPin_3);
         if ((val_3 == HIGH) && (last_val_3 == LOW)) {
             last_val_3 = val_3;
@@ -234,6 +269,15 @@ restart:
     next_write("Press to continue");
     next_write("Press to end");
     while(1) {
+        if (BT.availebal()) {
+            bt_read = BT.read();
+            if (bt_read == 3){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
         val_3 = digitalRead(buttonPin_3);
         if ((val_3 == HIGH) && (last_val_3 == LOW)) {
             last_val_3 = val_3;
@@ -268,6 +312,15 @@ void Fight_landowner() {
     clear_write("Let's Fight!");
     next_write("Press to start");
     while(1) {
+        if (BT.availebal()) {
+            bt_read = BT.read();
+            if (bt_read == 3){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
         val_3 = digitalRead(buttonPin_3);
         if ((val_3 == HIGH) && (last_val_3 == LOW)) {
             last_val_3 = val_3;
@@ -330,6 +383,13 @@ void start_game(int game_index, int player_number) {
         clear_write("Texas start!");
         next_write("Press to Continue!");
         while(1) {
+            if (BT.availeble() > 0) {
+                bt_read = BT.read();
+                if (bt_read == 3){
+                    bt_read = -1;
+                    break;
+                }
+            }
             val_3 = digitalRead(buttonPin_3);
             if ((val_3 == HIGH) && (last_val_3 == LOW)) {
                 last_val_3 = val_3;
@@ -394,6 +454,13 @@ void loop() {
                 number_of_player += 1;
             }
             break;
+        case 2:
+            bt_read = -1;
+            start_game(game_index, number_of_player);
+            u8x8.clearDisplay();
+            u8x8.setCursor(0, 0);
+            break;
+
         
         default:
             break;
