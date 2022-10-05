@@ -91,7 +91,9 @@ String game_name[3] = {
 };
 
 void draw() {
-    stepper_drawer.step(2600);
+    stepper_drawer.step(-3000);
+	delay(40);
+    stepper_drawer.step(1800);
 }
 
 void rotate(int step) {
