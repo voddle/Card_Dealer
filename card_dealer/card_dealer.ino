@@ -425,7 +425,7 @@ void setup() {
     val_2 = 0;
 
 
-    stepper_drawer.setSpeed(1800);
+    stepper_drawer.setSpeed(1650);
 
     u8x8.begin();
     u8x8.setFont(u8x8_font_chroma48medium8_r);
