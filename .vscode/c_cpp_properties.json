@@ -3,8 +3,9 @@
     "configurations": [
         {
             "name": "Arduino",
-            "compilerPath": "D:\\D_program\\Arduino\\hardware\\tools\\avr\\bin\\avr-g++",
+            "compilerPath": "C:\\Users\\13778\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\bin\\avr-g++",
             "compilerArgs": [
+                "-w",
                 "-std=gnu++11",
                 "-fpermissive",
                 "-fno-exceptions",
@@ -15,26 +16,26 @@
             ],
             "intelliSenseMode": "gcc-x64",
             "includePath": [
-                "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\cores\\arduino",
-                "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\variants\\standard",
+                "C:\\Users\\13778\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\cores\\arduino",
+                "C:\\Users\\13778\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\variants\\eightanaloginputs",
                 "D:\\D_program\\Arduino\\libraries\\Stepper\\src",
                 "C:\\Users\\13778\\Documents\\Arduino\\libraries\\U8g2\\src",
-                "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\libraries\\SoftwareSerial\\src",
-                "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\libraries\\SPI\\src",
-                "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\libraries\\Wire\\src",
-                "d:\\d_program\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include",
-                "d:\\d_program\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include-fixed",
-                "d:\\d_program\\arduino\\hardware\\tools\\avr\\avr\\include"
+                "C:\\Users\\13778\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\libraries\\SoftwareSerial\\src",
+                "C:\\Users\\13778\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\libraries\\SPI\\src",
+                "C:\\Users\\13778\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\libraries\\Wire\\src",
+                "c:\\users\\13778\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\lib\\gcc\\avr\\7.3.0\\include",
+                "c:\\users\\13778\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\lib\\gcc\\avr\\7.3.0\\include-fixed",
+                "c:\\users\\13778\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\avr\\include"
             ],
             "forcedInclude": [
-                "D:\\D_program\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
+                "C:\\Users\\13778\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.5\\cores\\arduino\\Arduino.h"
             ],
             "cStandard": "c11",
             "cppStandard": "c++11",
             "defines": [
                 "F_CPU=16000000L",
                 "ARDUINO=10819",
-                "ARDUINO_AVR_UNO",
+                "ARDUINO_AVR_NANO",
                 "ARDUINO_ARCH_AVR",
                 "__DBL_MIN_EXP__=(-125)",
                 "__HQ_FBIT__=15",

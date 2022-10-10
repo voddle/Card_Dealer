@@ -22,8 +22,8 @@ int lightMode = 0;
 Stepper stepper_drawer(800, 4, 5);
 Stepper stepper_base(800, 6, 7);
 
-const int buttonPin_0 = 8;
-const int buttonPin_1 = 9;
+const int buttonPin_0 = 13;
+const int buttonPin_1 = 12;
 const int buttonPin_2 = 10;
 const int buttonPin_3 = 11;
 const int buttonPin_Test = 8;
@@ -31,7 +31,7 @@ const int buttonPin_Test = 8;
 // const int trigPin = 2;
 // const int echopin = 3;
 // TXD 2, RXD 3
-SoftwareSerial BT(2, 3);
+SoftwareSerial BT(3, 2);
 
 //for read button0
 int val_0 = 1;
@@ -157,9 +157,9 @@ restart:
     next_write("Wait Flop");
   
     while(1) {
-        if (BT.availebal()) {
+        if (BT.available()) {
             bt_read = BT.read();
-            if (bt_read == 3){
+            if (bt_read == '2'){
                 bt_read = -1;
                 break;
             }
@@ -196,9 +196,9 @@ restart:
 
     // wait
     while(1) {
-        if (BT.availebal()) {
+        if (BT.available()) {
             bt_read = BT.read();
-            if (bt_read == 3){
+            if (bt_read == '2'){
                 bt_read = -1;
                 break;
             }
@@ -222,9 +222,9 @@ restart:
 
     // wait
     while(1) {
-        if (BT.availebal()) {
+        if (BT.available()) {
             bt_read = BT.read();
-            if (bt_read == 3){
+            if (bt_read == '2'){
                 bt_read = -1;
                 break;
             }
@@ -248,9 +248,9 @@ restart:
     next_write("SHOW!!!");
 
     while(1) {
-        if (BT.availebal()) {
+        if (BT.available()) {
             bt_read = BT.read();
-            if (bt_read == 3){
+            if (bt_read == '2'){
                 bt_read = -1;
                 break;
             }
@@ -269,9 +269,9 @@ restart:
     next_write("Press to continue");
     next_write("Press to end");
     while(1) {
-        if (BT.availebal()) {
+        if (BT.available()) {
             bt_read = BT.read();
-            if (bt_read == 3){
+            if (bt_read == '2'){
                 bt_read = -1;
                 break;
             }
@@ -312,9 +312,9 @@ void Fight_landowner() {
     clear_write("Let's Fight!");
     next_write("Press to start");
     while(1) {
-        if (BT.availebal()) {
+        if (BT.available()) {
             bt_read = BT.read();
-            if (bt_read == 3){
+            if (bt_read == '2'){
                 bt_read = -1;
                 break;
             }
@@ -351,6 +351,15 @@ void Fight_landowner() {
     
     next_write("Press to back");
     while(1) {
+        if (BT.available()) {
+            bt_read = BT.read();
+            if (bt_read == '2'){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
         val_3 = digitalRead(buttonPin_3);
         if ((val_3 == HIGH) && (last_val_3 == LOW)) {
             last_val_3 = val_3;
@@ -383,9 +392,9 @@ void start_game(int game_index, int player_number) {
         clear_write("Texas start!");
         next_write("Press to Continue!");
         while(1) {
-            if (BT.availeble() > 0) {
+            if (BT.available() > 0) {
                 bt_read = BT.read();
-                if (bt_read == 3){
+                if (bt_read == '2'){
                     bt_read = -1;
                     break;
                 }
@@ -419,6 +428,9 @@ void setup() {
     pinMode(step_Pin_Base, OUTPUT);
     pinMode(direction_Pin_Drawer, OUTPUT);
     pinMode(step_Pin_Drawer, OUTPUT);
+    Serial.begin(9600);
+    pinMode(13, INPUT);
+
 
     val_0 = 0;
     val_1 = 0;
@@ -437,9 +449,10 @@ void loop() {
 
     if (BT.available() > 0) {
         bt_read = BT.read();
+        Serial.print(bt_read);
         switch (bt_read)
         {
-        case 0:
+        case '0':
             /* code */
             if (game_index == 2) {
                 game_index = 0;
@@ -447,14 +460,14 @@ void loop() {
                 game_index += 1;
             }
             break;
-        case 1:
+        case '1':
             if (number_of_player == 9) {
                 number_of_player = 2;
             } else {
                 number_of_player += 1;
             }
             break;
-        case 2:
+        case '2':
             bt_read = -1;
             start_game(game_index, number_of_player);
             u8x8.clearDisplay();

@@ -1,6 +1,7 @@
 {
-    "port": "COM5",
-    "board": "arduino:avr:uno",
+    "port": "COM6",
+    "board": "arduino:avr:nano",
     "programmer": "arduino:avrisp",
-    "sketch": "card_dealer\\card_dealer.ino"
+    "sketch": "card_dealer\\card_dealer.ino",
+    "configuration": "cpu=atmega328old"
 }
