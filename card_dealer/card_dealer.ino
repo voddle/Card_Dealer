@@ -91,7 +91,9 @@ String game_name[3] = {
 };
 
 void draw() {
-    stepper_drawer.step(2600);
+    stepper_drawer.step(-3000);
+	delay(40);
+    stepper_drawer.step(1800);
 }
 
 void rotate(int step) {
@@ -437,7 +439,7 @@ void setup() {
     val_2 = 0;
 
 
-    stepper_drawer.setSpeed(1800);
+    stepper_drawer.setSpeed(1650);
 
     u8x8.begin();
     u8x8.setFont(u8x8_font_chroma48medium8_r);
