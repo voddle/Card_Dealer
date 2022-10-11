@@ -3,11 +3,11 @@
 #include <U8x8lib.h>
 #include <SoftwareSerial.h>
 
-#define direction_Pin_Base 4
-#define step_Pin_Base 5
+#define direction_Pin_Base 5
+#define step_Pin_Base 4
 
-#define direction_Pin_Drawer 6
-#define step_Pin_Drawer 7
+#define direction_Pin_Drawer 7
+#define step_Pin_Drawer 6
 
 #define total_steps 3200
 
@@ -19,8 +19,8 @@ int lightMode = 0;
 // Stepper stepper_drawer(800, direction_Pin_Drawer, step_Pin_Drawer);
 // Stepper stepper_base(800, direction_Pin_Base, step_Pin_Base);
 
-Stepper stepper_drawer(800, 4, 5);
-Stepper stepper_base(800, 6, 7);
+Stepper stepper_drawer(800, 5, 4);
+Stepper stepper_base(800, 7, 6);
 
 const int buttonPin_0 = 13;
 const int buttonPin_1 = 12;
@@ -93,16 +93,17 @@ String game_name[3] = {
 void draw() {
     stepper_drawer.step(-3000);
 	delay(40);
-    stepper_drawer.step(1800);
+    stepper_drawer.step(2400);
 }
 
 void rotate(int step) {
     stepper_base.step(step);
     accumulate_step += per_rotate_step;
+    stepper_drawer.step(-200);
 }
 
 void back_init_position() {
-    stepper_base.step(total_steps - accumulate_step);
+    stepper_base.step(-accumulate_step);
     accumulate_step = 0;
 }
 
@@ -136,19 +137,19 @@ void Texas(int player_number) {
 
     // init player, position, and angle
     int per_rotate_angle = 360 / player_number;
-    per_rotate_step = 1 / player_number * 3200;
+    per_rotate_step = 1.0 / player_number * 3200;
 
 restart:
     // TODO: need interrupt function
     clear_write("Pre-floding");
     for(int i = 0; i < 2; i++) {
-        for(int j = 0; j < player_number; j++) {
+        for(int j = 0; j < player_number-1; j++) {
             //draw
             draw();
-            delay(300);
             //rotate
             rotate(per_rotate_step);
         }
+        draw();
         // roll_back
         back_init_position();
     }
@@ -167,12 +168,12 @@ restart:
             }
             bt_read = -1;
         }
-        val_3 = digitalRead(buttonPin_3);
-        if ((val_3 == HIGH) && (last_val_3 == LOW)) {
-            last_val_3 = val_3;
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
             break;
         }
-        last_val_3 = val_3;
+        last_val_2 = val_2;
 
         // check interruption
         val_0 = digitalRead(buttonPin_0);
@@ -207,12 +208,12 @@ restart:
             bt_read = -1;
         }
 
-        val_3 = digitalRead(buttonPin_3);
-        if ((val_3 == HIGH) && (last_val_3 == LOW)) {
-            last_val_3 = val_3;
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
             break;
         }
-        last_val_3 = val_3;
+        last_val_2 = val_2;
     }
 
     // turn
@@ -233,12 +234,12 @@ restart:
             bt_read = -1;
         }
 
-        val_3 = digitalRead(buttonPin_3);
-        if ((val_3 == HIGH) && (last_val_3 == LOW)) {
-            last_val_3 = val_3;
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
             break;
         }
-        last_val_3 = val_3;
+        last_val_2 = val_2;
     }
 
     // river
@@ -259,12 +260,12 @@ restart:
             bt_read = -1;
         }
 
-        val_3 = digitalRead(buttonPin_3);
-        if ((val_3 == HIGH) && (last_val_3 == LOW)) {
-            last_val_3 = val_3;
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
             break;
         }
-        last_val_3 = val_3;
+        last_val_2 = val_2;
     }
 
     clear_write("Game over");
@@ -280,17 +281,19 @@ restart:
             bt_read = -1;
         }
 
-        val_3 = digitalRead(buttonPin_3);
-        if ((val_3 == HIGH) && (last_val_3 == LOW)) {
-            last_val_3 = val_3;
-            break;
-        }
-        last_val_3 = val_3;
-
         val_2 = digitalRead(buttonPin_2);
         if ((val_2 == HIGH) && (last_val_2 == LOW)) {
             last_val_2 = val_2;
-            clear_write("Put decker back");
+            break;
+        }
+        last_val_2 = val_2;
+
+        val_1 = digitalRead(buttonPin_1);
+        if ((val_1 == HIGH) && (last_val_1 == LOW)) {
+            last_val_1 = val_1;
+            stepper_base.step(per_rotate_step);
+            clear_write("BB moved");
+            next_write("Put decker back");
             while(1) {
                 val_2 = digitalRead(buttonPin_2);
                 if ((val_2 == HIGH) && (last_val_2 == LOW)) {
@@ -299,10 +302,9 @@ restart:
                 }
                 last_val_2 = val_2;
             }
-            stepper_base.step(per_rotate_step);
             goto restart;
         }
-        last_val_2 = val_2;
+        last_val_1 = val_1;
     }
 
 Texas_Finish: 
@@ -323,21 +325,24 @@ void Fight_landowner() {
             bt_read = -1;
         }
 
-        val_3 = digitalRead(buttonPin_3);
-        if ((val_3 == HIGH) && (last_val_3 == LOW)) {
-            last_val_3 = val_3;
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
             break;
         }
-        last_val_3 = val_3;
+        last_val_2 = val_2;
     }
     clear_write("Dealing");
     for(int i = 0; i < 17; i++) {
-        for(int j = 0; j < 3; j++) {
+        for(int j = 0; j < 3 - 1; j++) {
             // draw
             draw();
             delay(50);
             // rotate
+            rotate(1066);
         }
+        draw();
+        back_init_position();
     }
     next_write("Now pub card");
 
@@ -387,6 +392,7 @@ void Upgrade() {
 
 
 void start_game(int game_index, int player_number) {
+    delay(20);
     switch (game_index)
     {
     case 0:
@@ -401,12 +407,12 @@ void start_game(int game_index, int player_number) {
                     break;
                 }
             }
-            val_3 = digitalRead(buttonPin_3);
-            if ((val_3 == HIGH) && (last_val_3 == LOW)) {
-                last_val_3 = val_3;
+            val_2 = digitalRead(buttonPin_2);
+            if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+                last_val_2 = val_2;
                 break;
             }
-            last_val_3 = val_3;
+            last_val_2 = val_2;
         }
         u8x8.clearDisplay();
         Texas(number_of_player);
@@ -440,6 +446,7 @@ void setup() {
 
 
     stepper_drawer.setSpeed(1650);
+    stepper_base.setSpeed(100);
 
     u8x8.begin();
     u8x8.setFont(u8x8_font_chroma48medium8_r);
@@ -510,6 +517,7 @@ void loop() {
     val_2 = digitalRead(buttonPin_2);
     if ((val_2 == HIGH) && (last_val_2 == LOW)) {
         // here start the game
+        last_val_2 = val_2;
         start_game(game_index, number_of_player);
         u8x8.clearDisplay();
         u8x8.setCursor(0, 0);
