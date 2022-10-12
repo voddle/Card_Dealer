@@ -962,11 +962,12 @@ black_jack:
 
         while (!record[player_index]){
             if (player_index == player_number) {
-                player_index = 0;
+                player_index = 1;
+                back_init_position();
             } else {
                 player_index += 1;
+                rotate(per_rotate_step);
             }
-            rotate(per_rotate_step);
         }
 
         // print info
