@@ -64,6 +64,12 @@ int state[5] = {};
 int last_val[5] = {};
 int button_Pin[5] = {buttonPin_0, buttonPin_1, buttonPin_2, buttonPin_3, buttonPin_Test};
 
+// for black jack to skip player
+bool record[9] = {true, true, true, true, true, true, true, true, true};
+
+// for black jack
+int player_index = 0;
+
 // test value
 int test = 0;
 
@@ -72,6 +78,9 @@ int game_index = 0;
 
 // init player number
 int number_of_player = 2;
+
+// init value for black jack
+int left_player = 2;
 
 // init step related value
 // value for rotate back
@@ -93,12 +102,14 @@ String menu[3] = {
 };
 
 // game mode array
-String game_name[5] = {
+String game_name[6] = {
     "Texas          ",
     "Fight landowner",
     "Upgrade        ",
     "Three Card     ",
     "Bluff          ",
+    "Black Jack     ",
+
 };
 
 // draw function, rotate drawer and rotate back to 
@@ -846,6 +857,244 @@ bluff:
     }
 }
 
+void Black_Jack(int player_number) {
+    // init player, position, and angle
+    int per_rotate_angle = 360 / player_number;
+    per_rotate_step = 1.0 / player_number * 3200;
+
+black_jack:
+    // print info
+    clear_write("Let's Bluff!");
+    next_write("Press to");
+    next_write("Start");
+
+    // wait
+    while(1) {
+
+        // bluetooth read
+        if (BT.available()) {
+            bt_read = BT.read();
+            if (bt_read == '2'){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
+            break;
+        }
+        last_val_2 = val_2;
+    }
+
+    // print info
+    clear_write("Dealing");
+
+    next_write("Face down card");
+
+    for(int j = 0; j < player_number - 1; j++) {
+        // draw
+        draw();
+        delay(50);
+        // rotate
+        rotate(per_rotate_step);
+    }
+    draw();
+    back_init_position();
+
+    next_write("Face up card");
+
+    for(int j = 0; j < player_number - 1; j++) {
+        // draw
+        draw();
+        delay(50);
+        // rotate
+        rotate(per_rotate_step);
+    }
+    draw();
+    back_init_position();
+
+    left_player = player_number;
+
+    clear_write("Deal finish");
+    next_write("Start Call");
+    next_write("Press to");
+    next_write("continue");
+
+    // wait
+    while(1) {
+
+        // bluetooth read
+        if (BT.available()) {
+            bt_read = BT.read();
+            if (bt_read == '2'){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
+            break;
+        }
+        last_val_2 = val_2;
+    }
+
+
+    // // print info
+    // clear_write("Player");
+    // u8x8.print(left_player);
+    // next_write("Stand Or");
+    // next_write("Hit");
+
+    for(int i = 0; i < player_number; i++) {
+        record[i] = true;
+    }
+
+    player_index = 1;
+
+    // wait
+    while(left_player > 0) {
+
+        while (!record[player_index]){
+            if (player_index == player_number) {
+                player_index = 0;
+            } else {
+                player_index += 1;
+            }
+            rotate(per_rotate_step);
+        }
+
+        // print info
+        clear_write("Player");
+        u8x8.print(player_index);
+        next_write("Stand Or");
+        next_write("Hit");
+
+        while(1) {
+
+            // bluetooth read
+            if (BT.available()) {
+                bt_read = BT.read();
+
+                // stand
+                if (bt_read == '1'){
+                    bt_read = -1;
+                    draw();
+                    break;
+                }
+
+                // hit
+                if (bt_read == '2'){
+                    bt_read = -1;
+                    left_player -= 1;
+                    record[player_index] = false;
+                    break;
+                }
+                bt_read = -1;
+            }
+
+            // stand
+            val_1 = digitalRead(buttonPin_1);
+            if ((val_1 == HIGH) && (last_val_1 == LOW)) {
+                last_val_1 = val_1;
+                draw();
+                break;
+            }
+            last_val_1 = val_1;
+
+            // hit
+            val_2 = digitalRead(buttonPin_2);
+            if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+                last_val_2 = val_2;
+                left_player -= 1;
+                record[player_index] = false;
+                break;
+            }
+            last_val_2 = val_2;
+        }
+
+        if (player_index == player_number) {
+            player_index = 1;
+            back_init_position();
+        } else {
+            player_index += 1;
+            rotate(per_rotate_step);
+        }
+    }
+
+    back_init_position();
+
+    clear_write("Nobody can hit");
+    next_write("Show!!!");
+    next_write("Press to");
+    next_write("continue");
+
+    while(1) {
+        if (BT.available()) {
+            bt_read = BT.read();
+            if (bt_read == '2'){
+                bt_read = -1;
+                break;
+            }
+            bt_read = -1;
+        }
+
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
+            break;
+        }
+        last_val_2 = val_2;
+    }
+
+    clear_write("Press to back");
+    next_write("Or continue");
+    while(1) {
+        if (BT.available()) {
+            bt_read = BT.read();
+
+            if (bt_read == '1'){
+                bt_read = -1;
+                // change banker
+                stepper_base.step(per_rotate_step);
+                // restart
+                goto black_jack;
+            }
+
+            if (bt_read == '2'){
+                bt_read = -1;
+                // just end
+                break;
+            }
+            bt_read = -1;
+        }
+
+        val_1 = digitalRead(buttonPin_1);
+        if ((val_1 == HIGH) && (last_val_1 == LOW)) {
+            last_val_1 = val_1;
+            // change banker
+            stepper_base.step(per_rotate_step);
+            // restart
+            goto black_jack;
+        }
+        last_val_1 = val_1;
+
+
+        val_2 = digitalRead(buttonPin_2);
+        if ((val_2 == HIGH) && (last_val_2 == LOW)) {
+            last_val_2 = val_2;
+            // just end
+            break;
+        }
+        last_val_2 = val_2;
+    }
+
+}
 
 void start_game(int game_index, int player_number) {
     delay(20);
@@ -888,6 +1137,10 @@ void start_game(int game_index, int player_number) {
 
     case 4:
         Bluff(player_number);
+        break;
+
+    case 5:
+        Black_Jack(player_number);
         break;
    
     default:
@@ -934,7 +1187,7 @@ void loop() {
         {
         // botton 0
         case '0':
-            if (game_index == 4) {
+            if (game_index == 5) {
                 game_index = 0;
             } else {
                 game_index += 1;
@@ -948,7 +1201,7 @@ void loop() {
 
         // botton 1
         case '1':
-            if (game_index == 0 || game_index == 3) {
+            if (game_index == 0 || game_index == 3 || game_index == 5) {
                 if (number_of_player == 9) {
                     number_of_player = 2;
                 } else {
@@ -982,7 +1235,7 @@ void loop() {
     val_0 = digitalRead(buttonPin_0);
     if ((val_0 == HIGH) && (last_val_0 == LOW)) {
         state_0 = 1 - state_0;
-        if (game_index == 4) {
+        if (game_index == 5) {
             game_index = 0;
         } else {
             game_index += 1;
@@ -1000,7 +1253,7 @@ void loop() {
     val_1 = digitalRead(buttonPin_1);
     if ((val_1 == HIGH) && (last_val_1 == LOW)) {
         state_1 = 1 - state_1;
-        if (game_index == 0 || game_index == 3) {
+        if (game_index == 0 || game_index == 3 || game_index == 5) {
             if (number_of_player == 9) {
                 number_of_player = 2;
             } else {
@@ -1044,7 +1297,7 @@ void loop() {
     u8x8.print("\n");
 
     // only show player number when needed
-    if (game_index == 0 || game_index == 3 || game_index == 4) {
+    if (game_index == 0 || game_index == 3 || game_index == 4 || game_index == 5) {
         u8x8.print("Number of player");
         u8x8.print("\n");
         u8x8.print(number_of_player);
